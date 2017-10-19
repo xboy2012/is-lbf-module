@@ -1,38 +1,19 @@
-const patterns = [
-    'app.*',
-    'lang.',
-    'lib.*',
-    'monitor.*',
-    'ui.*',
-    'util.*',
-    'globalSettings',
+import detect from './core/detect';
+let cache = {};
 
-    'qidian.*',
-    '{theme}/*',
-
-    'shtmlUI.*'
-];
-
-const matchPattern = (str, pattern) => {
-    const parts = pattern.split('*');
-    let p = 0;
-
-    for(let part of parts) {
-        let i = str.indexOf(part, p);
-        if(i < 0)
-            return false;
-        p = i + part.length + 1;
+const isLbfModule = (name) => {
+    const key = `_CACHE_${name}`;
+    if(!cache.hasOwnProperty(key)) {
+        cache[key] = detect(name);
     }
-    return true;
+    return cache[key];
 };
 
-export default (name) => {
-    for(let pattern of patterns) {
-        if (matchPattern(name, pattern))
-            return true;
-    }
-    return false;
+//clear caches
+isLbfModule.clearCache = () => {
+    cache = {};
 };
 
+export default isLbfModule;
 
 
